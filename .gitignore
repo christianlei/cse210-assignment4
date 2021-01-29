@@ -1,0 +1,7 @@
+/env
+__pycache__/
+/libexec
+.vscode
+/build
+*.spec
+logs.txt
