@@ -27,12 +27,12 @@ class Expression(AST):
 
     def __str__(self):
         if self.method == 'if':
-            return "if " + str(self.conditional) \
-                   + " then { " + str(self.true) + " } else { " \
+            return "if (" + str(self.conditional).replace(" ", "") \
+                   + ") then { " + str(self.true) + " } else { " \
                    + str(self.false) + " }"
         if self.method == 'while':
-            return "while " + " (" + str(self.conditional) + ") " \
-                   + " do { " + str(self.true) + " }"
+            return "while" + " (" + str(self.conditional).replace(" ", "") + ") " \
+                   + "do { " + str(self.true) + " }"
         return
 
 

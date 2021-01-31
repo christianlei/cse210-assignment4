@@ -8,21 +8,23 @@ class Interpreter:
         self.d = {}
         self.empty_var = 0
         self.output_string = ""
-        self.first_command = False
+        self.first_command = True
         self.new_line = True
+        self.while_exp = False
+        self.multi_exp = False
 
     def print_result(self):
         print(self.output_string)
 
     def add_to_output_string(self, string):
+        # print("test", string)
         if self.new_line:
             self.output_string += "⇒ "
             self.new_line = False
-        if not self.first_command:
-            self.first_command = True
-            return False
+        if self.first_command:
+            self.first_command = False
+            return
         self.output_string += string
-        return True
 
     def check_in_dict(self, var):
         if var in self.d:
@@ -36,6 +38,7 @@ class Interpreter:
             return self.check_in_dict(item)
 
     def evaluate_if_expression(self, item):
+        self.add_to_output_string(str(item))
         if self.eval(item.conditional):
             return self.eval(item.true)
         else:
@@ -44,23 +47,61 @@ class Interpreter:
             else:
                 return None
 
-    def evaluate_while_loop(self, item):
+    def evaluate_while_loop(self, item, true_run=False):
+        self.add_to_output_string(str(item))
         if self.eval(item.conditional):
-            self.add_to_output_string(str(item.true))
+            self.while_exp = True
+            dict_state_before = self.dictionary_to_result()
             self.eval(item.true)
+            self.add_to_output_string("; " + str(item))
+            self.output_string += dict_state_before
+            self.output_string += '\n'
+            self.new_line = True
+            self.add_to_output_string("skip; ")
             self.add_to_output_string(str(item))
-            return self.eval(item)
+            self.output_string += self.dictionary_to_result()
+            self.output_string += '\n'
+            self.new_line = True
+            self.while_exp = False
+            return self.evaluate_while_loop(item, True)
         else:
+            if true_run:
+                self.output_string += self.dictionary_to_result()
+                self.output_string += '\n'
+                self.new_line = True
+            self.add_to_output_string("skip")
+            self.output_string += self.dictionary_to_result()
+            self.output_string += '\n'
+            self.new_line = True
+
+    def handle_multi_expression(self, item):
+        if item.next is not None:
+            self.multi_exp = True
+        self.eval(item.first)
+        if item.next is not None:
+            self.output_string += "; "
+            self.eval(item.next)
+
+    def handle_assignment_op(self, item):
+        left_item = self.eval(item.left)
+        right_item = self.eval(item.right)
+        self.add_to_output_string(str(item))
+        if not self.first_command and not self.while_exp and self.output_string != "⇒ ":
+            self.output_string += self.dictionary_to_result()
+            self.output_string += '\n'
+            self.new_line = True
+        self.d[left_item] = self.return_int_value(right_item)
+        if not self.while_exp and not self.multi_exp:
+            self.add_to_output_string("skip")
+            self.output_string += self.dictionary_to_result()
+        if self.multi_exp:
             self.add_to_output_string("skip")
 
     def eval(self, item):
         if isinstance(item, MultiExpression):
-            self.eval(item.first)
-            if item.next is not None:
-                self.eval(item.next)
+            self.handle_multi_expression(item)
 
         if isinstance(item, Expression):
-            self.add_to_output_string(str(item))
             if item.method == 'if':
                 return self.evaluate_if_expression(item)
             elif item.method == 'while':
@@ -70,15 +111,10 @@ class Interpreter:
             return not self.eval(item.node)
 
         if isinstance(item, BinaryOp):
+            if item.op == ':=':
+                self.handle_assignment_op(item)
             left_item = self.eval(item.left)
             right_item = self.eval(item.right)
-            if item.op == ':=':
-                if self.add_to_output_string(str(item)) and self.first_command:
-                    self.dictionary_to_result()
-                    self.output_string += '\n'
-                    self.new_line = True
-                self.add_to_output_string("skip")
-                self.d[left_item] = self.return_int_value(right_item)
             if item.op == '=':
                 return self.return_int_value(left_item) == self.return_int_value(right_item)
             if item.op == '<':
@@ -110,6 +146,6 @@ class Interpreter:
             return_list.append(string_format.format(key, value))
         return_list = sorted(return_list)
         return_string = ", ".join(return_list)
-        final_result = '{' + return_string + '}'
-        if self.output_string:
-            self.output_string += ', ' + final_result
+        return ', {' + return_string + '}'
+        # if self.output_string:
+        #     self.output_string += ', ' + final_result
