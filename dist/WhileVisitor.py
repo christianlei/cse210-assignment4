@@ -117,5 +117,4 @@ class WhileVisitor(ParseTreeVisitor):
         node.method = 'while'
         return node
 
-
 del WhileParser

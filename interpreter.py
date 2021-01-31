@@ -16,8 +16,10 @@ class Interpreter:
     def add_to_output_string(self, string):
         if not self.first_command:
             self.first_command = True
-            return
+            self.output_string += "⇒ "
+            return False
         self.output_string += string
+        return True
 
     def check_in_dict(self, var):
         if var in self.d:
@@ -32,14 +34,19 @@ class Interpreter:
 
     def evaluate_if_expression(self, item):
         if self.eval(item.conditional):
-            self.add_to_output_string(str(item.true))
             return self.eval(item.true)
         else:
             if item.false is not None:
-                self.add_to_output_string(str(item.false))
                 return self.eval(item.false)
             else:
                 return None
+
+    def evaluate_while_loop(self, item):
+        if self.eval(item.conditional):
+            self.add_to_output_string(str(item.true))
+            self.eval(item.true)
+            self.add_to_output_string(str(item))
+            return self.eval(item)
 
     def eval(self, item):
         if isinstance(item, MultiExpression):
@@ -48,46 +55,39 @@ class Interpreter:
                 self.eval(item.next)
 
         if isinstance(item, Expression):
-            self.add_to_output_string(str(Expression))
+            self.add_to_output_string(str(item))
             if item.method == 'if':
                 return self.evaluate_if_expression(item)
             elif item.method == 'while':
-                while self.eval(item.conditional):
-                    self.eval(item.true)
-                if not self.eval(item.conditional):
-                    self.add_to_output_string("⇒ skip")
+                return self.evaluate_while_loop(item)
 
         if isinstance(item, NotOp):
             return not self.eval(item.node)
 
         if isinstance(item, BinaryOp):
-            response = None
             left_item = self.eval(item.left)
             right_item = self.eval(item.right)
             if item.op == ':=':
-                if self.first_command:
+                if self.add_to_output_string(str(item)) and self.first_command:
                     self.dictionary_to_result()
-                if self.output_string:
                     self.output_string += '\n'
                 self.d[left_item] = self.return_int_value(right_item)
                 self.first_command = True
+                self.add_to_output_string("skip")
             if item.op == '=':
-                response = self.return_int_value(left_item) == self.return_int_value(right_item)
+                return self.return_int_value(left_item) == self.return_int_value(right_item)
             if item.op == '<':
-                response = self.return_int_value(left_item) < self.return_int_value(right_item)
+                return self.return_int_value(left_item) < self.return_int_value(right_item)
             if item.op == '-':
-                response = self.return_int_value(left_item) - self.return_int_value(right_item)
+                return self.return_int_value(left_item) - self.return_int_value(right_item)
             if item.op == '*':
-                response = self.return_int_value(left_item) * self.return_int_value(right_item)
+                return self.return_int_value(left_item) * self.return_int_value(right_item)
             if item.op == '+':
-                response = self.return_int_value(left_item) + self.return_int_value(right_item)
+                return self.return_int_value(left_item) + self.return_int_value(right_item)
             if item.op == '∧':
-                response = self.return_int_value(left_item) and self.return_int_value(right_item)
+                return self.return_int_value(left_item) and self.return_int_value(right_item)
             if item.op == '∨':
-                response = self.return_int_value(left_item) or self.return_int_value(right_item)
-            self.add_to_output_string("⇒ skip")
-            return response
-
+                return self.return_int_value(left_item) or self.return_int_value(right_item)
         if isinstance(item, Int) or isinstance(item, NegInt):
             return item.value
         elif isinstance(item, Var):

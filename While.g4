@@ -24,7 +24,7 @@ expr
     | left=expr op=('=' | '<') right=expr #INFIX
     | left=expr op=('∧' | '∨') right=expr #INFIX
     | op='¬' expr   #UNARYBOOL
-    | left=expr op=':=' right=expr #INFIX
+    | left=expr op=':=' right=expr #ASGN
     | value=NUMBER #INT
     | value=VAR #VAL
     | value=(TRUE|FALSE) #BOOL

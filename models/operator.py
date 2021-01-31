@@ -8,7 +8,7 @@ class BinaryOp(AST):
         self.right = right
 
     def __str__(self):
-        return "⇒ " + str(self.left) + " " + str(self.op) + " " + str(self.right)
+        return str(self.left) + " " + str(self.op) + " " + str(self.right)
 
 
 class NotOp(AST):
@@ -32,8 +32,8 @@ class Expression(AST):
                    + " then { " + str(self.true) + " } else { " \
                    + str(self.false) + " }"
         if self.method == 'while':
-            "while " + str(self.conditional) \
-                + " do { " + str(self.true) + " }"
+            return "while " + " (" + str(self.conditional) + ") " \
+                   + " do { " + str(self.true) + " }"
         return
 
 
