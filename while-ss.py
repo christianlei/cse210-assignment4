@@ -16,6 +16,7 @@ def main():
     interpreter = Interpreter()
     interpreter.eval(ast)
     interpreter.dictionary_to_result()
+    interpreter.print_result()
     return
 
 
