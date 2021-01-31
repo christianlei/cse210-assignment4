@@ -10,7 +10,6 @@ class BinaryOp(AST):
     def __str__(self):
         return str(self.left) + " " + str(self.op) + " " + str(self.right)
 
-
 class NotOp(AST):
     def __init__(self, node):
         self.node = node

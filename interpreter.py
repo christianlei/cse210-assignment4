@@ -9,14 +9,17 @@ class Interpreter:
         self.empty_var = 0
         self.output_string = ""
         self.first_command = False
+        self.new_line = True
 
     def print_result(self):
         print(self.output_string)
 
     def add_to_output_string(self, string):
+        if self.new_line:
+            self.output_string += "⇒ "
+            self.new_line = False
         if not self.first_command:
             self.first_command = True
-            self.output_string += "⇒ "
             return False
         self.output_string += string
         return True
@@ -47,6 +50,8 @@ class Interpreter:
             self.eval(item.true)
             self.add_to_output_string(str(item))
             return self.eval(item)
+        else:
+            self.add_to_output_string("skip")
 
     def eval(self, item):
         if isinstance(item, MultiExpression):
@@ -71,9 +76,9 @@ class Interpreter:
                 if self.add_to_output_string(str(item)) and self.first_command:
                     self.dictionary_to_result()
                     self.output_string += '\n'
-                self.d[left_item] = self.return_int_value(right_item)
-                self.first_command = True
+                    self.new_line = True
                 self.add_to_output_string("skip")
+                self.d[left_item] = self.return_int_value(right_item)
             if item.op == '=':
                 return self.return_int_value(left_item) == self.return_int_value(right_item)
             if item.op == '<':
