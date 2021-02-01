@@ -17,7 +17,6 @@ class Interpreter:
         print(self.output_string)
 
     def add_to_output_string(self, string):
-        # print("test", string)
         if self.new_line:
             self.output_string += "⇒ "
             self.new_line = False
@@ -38,14 +37,26 @@ class Interpreter:
             return self.check_in_dict(item)
 
     def evaluate_if_expression(self, item):
+        first_command = self.first_command
         self.add_to_output_string(str(item))
+        if not first_command:
+            self.output_string += self.dictionary_to_result()
+            self.output_string += '\n'
+            self.new_line = True
+            self.add_to_output_string(str(item))
+            self.output_string += self.dictionary_to_result()
+            self.output_string += '\n'
+            self.new_line = True
         if self.eval(item.conditional):
+            if not first_command:
+                self.add_to_output_string(str(item.true))
+                self.output_string += self.dictionary_to_result()
+                self.output_string += '\n'
+                self.new_line = True
             return self.eval(item.true)
-        else:
-            if item.false is not None:
-                return self.eval(item.false)
-            else:
-                return None
+        if item.false is not None:
+            return self.eval(item.false)
+        return None
 
     def evaluate_while_loop(self, item, true_run=False):
         self.add_to_output_string(str(item))
@@ -80,13 +91,27 @@ class Interpreter:
         self.eval(item.first)
         if item.next is not None:
             self.output_string += "; "
+            if item.brackets:
+                dictionary_before = self.dictionary_to_result()
+                self.add_to_output_string(str(item.next))
+                self.output_string += dictionary_before
+                self.output_string += '\n'
+                self.new_line = True
+                self.add_to_output_string(str(item.next))
+                self.output_string += self.dictionary_to_result()
+                self.output_string += '\n'
+                self.new_line = True
             self.eval(item.next)
+        if item.next is None and self.multi_exp:
+            self.output_string += self.dictionary_to_result()
 
     def handle_assignment_op(self, item):
         left_item = self.eval(item.left)
         right_item = self.eval(item.right)
-        self.add_to_output_string(str(item))
-        if not self.first_command and not self.while_exp and self.output_string != "⇒ ":
+        if self.first_command or not self.multi_exp:
+            self.add_to_output_string(str(item))
+        if not self.first_command and not self.while_exp and not self.multi_exp \
+                and self.output_string != "⇒ ":
             self.output_string += self.dictionary_to_result()
             self.output_string += '\n'
             self.new_line = True
@@ -140,12 +165,8 @@ class Interpreter:
     def dictionary_to_result(self):
         string_format = '{0} → {1}'
         return_list = []
-        # if not len(self.d.items()):
-        #     return
         for key, value in self.d.items():
             return_list.append(string_format.format(key, value))
         return_list = sorted(return_list)
         return_string = ", ".join(return_list)
         return ', {' + return_string + '}'
-        # if self.output_string:
-        #     self.output_string += ', ' + final_result

@@ -30,10 +30,10 @@ null
 
 token symbolic names:
 null
-null
-null
-null
-null
+PAREN_OP
+PAREN_CL
+BRACK_OP
+BRACK_CL
 SEMI
 OP_ADD
 OP_SUB
@@ -59,10 +59,10 @@ NUMBER
 WS
 
 rule names:
-T__0
-T__1
-T__2
-T__3
+PAREN_OP
+PAREN_CL
+BRACK_OP
+BRACK_CL
 SEMI
 OP_ADD
 OP_SUB

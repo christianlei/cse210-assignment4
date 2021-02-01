@@ -8,14 +8,17 @@ class BinaryOp(AST):
         self.right = right
 
     def __str__(self):
-        return str(self.left) + " " + str(self.op) + " " + str(self.right)
+        if self.op == ':=':
+            return str(self.left) + " " + str(self.op) + " " + str(self.right)
+        return "(" + str(self.left) + str(self.op) + str(self.right) + ")"
+
 
 class NotOp(AST):
     def __init__(self, node):
         self.node = node
 
     def __str__(self):
-        return str(self.node)
+        return "¬" + str(self.node)
 
 
 class Expression(AST):
@@ -27,19 +30,22 @@ class Expression(AST):
 
     def __str__(self):
         if self.method == 'if':
-            return "if (" + str(self.conditional).replace(" ", "") \
-                   + ") then { " + str(self.true) + " } else { " \
+            return "if " + str(self.conditional) \
+                   + " then { " + str(self.true) + " } else { " \
                    + str(self.false) + " }"
         if self.method == 'while':
-            return "while" + " (" + str(self.conditional).replace(" ", "") + ") " \
+            return "while" + " " + str(self.conditional) + " " \
                    + "do { " + str(self.true) + " }"
         return
 
 
 class MultiExpression(AST):
-    def __init__(self, first=None, next=None):
+    def __init__(self, first=None, next=None, brackets=False):
         self.first = first
         self.next = next
+        self.brackets = brackets
 
     def __str__(self):
-        return
+        if self.next is not None:
+            return str(self.first) + "; " + str(self.next)
+        return str(self.first)

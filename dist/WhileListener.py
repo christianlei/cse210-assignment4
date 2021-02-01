@@ -17,12 +17,21 @@ class WhileListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by WhileParser#semi_stat.
-    def enterSemi_stat(self, ctx:WhileParser.Semi_statContext):
+    # Enter a parse tree produced by WhileParser#COMM.
+    def enterCOMM(self, ctx:WhileParser.COMMContext):
         pass
 
-    # Exit a parse tree produced by WhileParser#semi_stat.
-    def exitSemi_stat(self, ctx:WhileParser.Semi_statContext):
+    # Exit a parse tree produced by WhileParser#COMM.
+    def exitCOMM(self, ctx:WhileParser.COMMContext):
+        pass
+
+
+    # Enter a parse tree produced by WhileParser#NOTCOMM.
+    def enterNOTCOMM(self, ctx:WhileParser.NOTCOMMContext):
+        pass
+
+    # Exit a parse tree produced by WhileParser#NOTCOMM.
+    def exitNOTCOMM(self, ctx:WhileParser.NOTCOMMContext):
         pass
 
 

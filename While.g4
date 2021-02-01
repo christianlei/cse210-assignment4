@@ -7,7 +7,9 @@ compileUnit
     ;
 
 semi_stat
-    : stat (SEMI stat)*
+    : stat SEMI BRACK_OP stat (SEMI stat)* BRACK_CL #COMM
+    | stat (SEMI stat)* #NOTCOMM
+    | BRACK_OP stat (SEMI stat)* BRACK_CL (SEMI stat)* #COMM
     ;
 
 stat
@@ -17,7 +19,7 @@ stat
     ;
 
 expr
-    : '(' expr ')' #PARENGRP
+    : PAREN_OP expr PAREN_CL #PARENGRP
     | op=('+'|'-') expr   #UNARY
     | left=expr op='*' right=expr #INFIX
     | left=expr op=('+'|'-') right=expr #INFIX
@@ -44,6 +46,10 @@ while_stat
 //////////////////////////////////
 // LEXER
 //////////////////////////////////
+PAREN_OP: '(';
+PAREN_CL: ')';
+BRACK_OP: '{';
+BRACK_CL: '}';
 SEMI: ';';
 
 OP_ADD: '+';

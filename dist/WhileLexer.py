@@ -84,10 +84,10 @@ class WhileLexer(Lexer):
 
     decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
 
-    T__0 = 1
-    T__1 = 2
-    T__2 = 3
-    T__3 = 4
+    PAREN_OP = 1
+    PAREN_CL = 2
+    BRACK_OP = 3
+    BRACK_CL = 4
     SEMI = 5
     OP_ADD = 6
     OP_SUB = 7
@@ -123,16 +123,17 @@ class WhileLexer(Lexer):
             "'do'", "'skip'" ]
 
     symbolicNames = [ "<INVALID>",
-            "SEMI", "OP_ADD", "OP_SUB", "OP_MUL", "OP_ASGN", "OP_EQ", "OP_NOT", 
-            "OP_AND", "OP_OR", "OP_LESS", "TERNARY_IF", "TERNARY_ELSE", 
-            "TRUE", "FALSE", "IF", "THEN", "ELSE", "WHILE", "DO", "PASS", 
-            "VAR", "NUMBER", "WS" ]
+            "PAREN_OP", "PAREN_CL", "BRACK_OP", "BRACK_CL", "SEMI", "OP_ADD", 
+            "OP_SUB", "OP_MUL", "OP_ASGN", "OP_EQ", "OP_NOT", "OP_AND", 
+            "OP_OR", "OP_LESS", "TERNARY_IF", "TERNARY_ELSE", "TRUE", "FALSE", 
+            "IF", "THEN", "ELSE", "WHILE", "DO", "PASS", "VAR", "NUMBER", 
+            "WS" ]
 
-    ruleNames = [ "T__0", "T__1", "T__2", "T__3", "SEMI", "OP_ADD", "OP_SUB", 
-                  "OP_MUL", "OP_ASGN", "OP_EQ", "OP_NOT", "OP_AND", "OP_OR", 
-                  "OP_LESS", "TERNARY_IF", "TERNARY_ELSE", "TRUE", "FALSE", 
-                  "IF", "THEN", "ELSE", "WHILE", "DO", "PASS", "VAR", "NUMBER", 
-                  "WS" ]
+    ruleNames = [ "PAREN_OP", "PAREN_CL", "BRACK_OP", "BRACK_CL", "SEMI", 
+                  "OP_ADD", "OP_SUB", "OP_MUL", "OP_ASGN", "OP_EQ", "OP_NOT", 
+                  "OP_AND", "OP_OR", "OP_LESS", "TERNARY_IF", "TERNARY_ELSE", 
+                  "TRUE", "FALSE", "IF", "THEN", "ELSE", "WHILE", "DO", 
+                  "PASS", "VAR", "NUMBER", "WS" ]
 
     grammarFileName = "While.g4"
 
