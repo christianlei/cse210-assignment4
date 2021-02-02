@@ -34,7 +34,7 @@ class Expression(AST):
                    + " then { " + str(self.true) + " } else { " \
                    + str(self.false) + " }"
         if self.method == 'while':
-            return "while" + " " + str(self.conditional) + " " \
+            return "while" + " " + str(self.conditional).lower() + " " \
                    + "do { " + str(self.true) + " }"
         return
 

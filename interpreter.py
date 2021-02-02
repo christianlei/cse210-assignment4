@@ -83,6 +83,8 @@ class Interpreter:
         conditional_bool = self.eval(item.conditional)
         if conditional_bool and self.first_command_printed and not self.multi_exp:
             self.adding_dictionary_to_end()
+        # if not conditional_bool and self.output_string != "⇒ " and self.first_command_printed and not self.multi_exp:
+        #     self.adding_dictionary_to_end()
 
         if conditional_bool and not self.multi_exp:
             self.while_exp = True
@@ -110,10 +112,11 @@ class Interpreter:
                 dictionary_before = self.dictionary_to_string()
                 self.eval(item.true.next)
                 self.add_to_output_string("skip; ")
-                self.add_to_output_string(str(item.true.next.first) + "; " + str(item))
-                self.adding_dictionary_before_to_end(dictionary_before)
-                self.add_to_output_string(str(item.true.next.first) + "; " + str(item))
-                self.adding_dictionary_before_to_end(dictionary_before)
+                if item.true.next is not None:
+                    self.add_to_output_string(str(item.true.next.first) + "; " + str(item))
+                    self.adding_dictionary_before_to_end(dictionary_before)
+                    self.add_to_output_string(str(item.true.next.first) + "; " + str(item))
+                    self.adding_dictionary_before_to_end(dictionary_before)
             else:
                 self.eval(item.true)
             self.while_exp = False
@@ -128,12 +131,16 @@ class Interpreter:
             self.adding_dictionary_to_end()
             self.add_to_output_string(str(item))
             self.adding_dictionary_to_end()
-        self.add_to_output_string("skip")
-        self.adding_dictionary_to_end()
+
+        if not self.multi_exp:
+            self.add_to_output_string("skip")
+            self.adding_dictionary_to_end()
 
     def handle_multi_expression(self, item):
         if item.next is not None:
             self.multi_exp = True
+            if self.first_multi_expression_run:
+                self.add_to_output_string(str(item))
             self.eval(item.first)
             if item.brackets:
                 dictionary_before = self.dictionary_to_string()
@@ -155,7 +162,7 @@ class Interpreter:
         else:
             self.eval(item.first)
 
-        if item.next is None and self.multi_exp and item.brackets:
+        if item.next is None and self.multi_exp:
             self.add_to_output_string("skip")
             self.output_string += self.dictionary_to_string()
 
