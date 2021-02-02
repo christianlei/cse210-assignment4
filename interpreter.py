@@ -13,11 +13,11 @@ class Interpreter:
         self.first_command = True
         self.deque = []
         self.deque_first = True
+        self.num_of_multi_run = 0
+        self.previous_run = None
 
     def add_remainder_of_deque(self):
         while self.deque:
-            # if not self.deque:
-            #     self.output_string += "⇒ "
             deq_item = self.deque.pop(0)
             if not self.deque:
                 self.output_string += str(deq_item)
@@ -64,8 +64,6 @@ class Interpreter:
             return self.check_in_dict(item)
 
     def evaluate_if_expression(self, item):
-        # if self.add_to_output_string(str(item)):
-        #     self.adding_dictionary_to_end()
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
         if self.eval(item.conditional):
             return self.eval(item.true)
@@ -78,7 +76,8 @@ class Interpreter:
     def evaluate_while_loop(self, item):
         conditional = self.eval(item.conditional)
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
-        self.add_remainder_of_deque() # adding new step to output, might need to adjust if line above not run
+        self.previous_run = str(item)
+        self.add_remainder_of_deque()  # adding new step to output, might need to adjust if line above not run
         if conditional:
             new_deque = []
             self.eval(item.true)
@@ -97,7 +96,7 @@ class Interpreter:
                     new_deque.append(deq_item)
             self.deque = new_deque
             self.add_remainder_of_deque()
-            self.eval(item)
+            self.evaluate_while_loop(item)
 
         else:
             self.add_to_output_deque(Skip(), Dictionary(self.dictionary_to_string()))
@@ -108,13 +107,19 @@ class Interpreter:
         self.add_to_output_deque(Skip(), Dictionary(self.dictionary_to_string()))
 
     def evaluate_multi_expressions(self, item):
+        self.eval(item.first)
         if item.next is not None:
-            if not len(self.deque) == 2:
+            if len(self.deque) == 10:
+                self.deque.insert(-3, str(item.next))
+                self.deque.insert(-1, str(item.next))
+            elif not len(self.deque) == 2:
                 self.deque.insert(1, str(item.next))
                 self.deque.insert(-1, str(item.next))
             else:
                 self.deque.insert(1, str(item.next))
-        self.add_remainder_of_deque()
+        if not self.num_of_multi_run:
+            self.add_remainder_of_deque()
+        self.num_of_multi_run += 1
         if item.next is not None:
             self.eval(item.next)
 
