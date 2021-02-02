@@ -76,7 +76,6 @@ class Interpreter:
     def evaluate_while_loop(self, item):
         conditional = self.eval(item.conditional)
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
-        self.previous_run = str(item)
         self.add_remainder_of_deque()  # adding new step to output, might need to adjust if line above not run
         if conditional:
             new_deque = []
