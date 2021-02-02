@@ -15,7 +15,6 @@ def main():
     ast = WhileVisitor().visitCompileUnit(tree)
     interpreter = Interpreter()
     interpreter.eval(ast)
-    interpreter.dictionary_to_string()
     interpreter.print_result()
     return
 

@@ -185,84 +185,42 @@ class WhileParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+        def stat(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(WhileParser.StatContext)
+            else:
+                return self.getTypedRuleContext(WhileParser.StatContext,i)
+
+
+        def SEMI(self, i:int=None):
+            if i is None:
+                return self.getTokens(WhileParser.SEMI)
+            else:
+                return self.getToken(WhileParser.SEMI, i)
+
+        def BRACK_OP(self):
+            return self.getToken(WhileParser.BRACK_OP, 0)
+
+        def BRACK_CL(self):
+            return self.getToken(WhileParser.BRACK_CL, 0)
 
         def getRuleIndex(self):
             return WhileParser.RULE_semi_stat
 
-     
-        def copyFrom(self, ctx:ParserRuleContext):
-            super().copyFrom(ctx)
-
-
-
-    class COMMContext(Semi_statContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a WhileParser.Semi_statContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def stat(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(WhileParser.StatContext)
-            else:
-                return self.getTypedRuleContext(WhileParser.StatContext,i)
-
-        def SEMI(self, i:int=None):
-            if i is None:
-                return self.getTokens(WhileParser.SEMI)
-            else:
-                return self.getToken(WhileParser.SEMI, i)
-        def BRACK_OP(self):
-            return self.getToken(WhileParser.BRACK_OP, 0)
-        def BRACK_CL(self):
-            return self.getToken(WhileParser.BRACK_CL, 0)
-
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCOMM" ):
-                listener.enterCOMM(self)
+            if hasattr( listener, "enterSemi_stat" ):
+                listener.enterSemi_stat(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCOMM" ):
-                listener.exitCOMM(self)
+            if hasattr( listener, "exitSemi_stat" ):
+                listener.exitSemi_stat(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCOMM" ):
-                return visitor.visitCOMM(self)
+            if hasattr( visitor, "visitSemi_stat" ):
+                return visitor.visitSemi_stat(self)
             else:
                 return visitor.visitChildren(self)
 
-
-    class NOTCOMMContext(Semi_statContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a WhileParser.Semi_statContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def stat(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(WhileParser.StatContext)
-            else:
-                return self.getTypedRuleContext(WhileParser.StatContext,i)
-
-        def SEMI(self, i:int=None):
-            if i is None:
-                return self.getTokens(WhileParser.SEMI)
-            else:
-                return self.getToken(WhileParser.SEMI, i)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterNOTCOMM" ):
-                listener.enterNOTCOMM(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitNOTCOMM" ):
-                listener.exitNOTCOMM(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitNOTCOMM" ):
-                return visitor.visitNOTCOMM(self)
-            else:
-                return visitor.visitChildren(self)
 
 
 
@@ -276,7 +234,6 @@ class WhileParser ( Parser ):
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,4,self._ctx)
             if la_ == 1:
-                localctx = WhileParser.COMMContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 15
                 self.stat()
@@ -303,7 +260,6 @@ class WhileParser ( Parser ):
                 pass
 
             elif la_ == 2:
-                localctx = WhileParser.NOTCOMMContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 28
                 self.stat()
@@ -322,7 +278,6 @@ class WhileParser ( Parser ):
                 pass
 
             elif la_ == 3:
-                localctx = WhileParser.COMMContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 36
                 self.match(WhileParser.BRACK_OP)

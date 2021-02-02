@@ -83,29 +83,18 @@ class WhileVisitor(ParseTreeVisitor):
         node.method = 'if'
         return node
 
-    # Visit a parse tree produced by WhileParser#NOTCOMM.
-    def visitNOTCOMM(self, ctx: WhileParser.NOTCOMMContext):
-        root_node = MultiExpression()
+    # Visit a parse tree produced by WhileParser#stat.
+    def visitSemi_stat(self, ctx:WhileParser.StatContext):
         list_of_stat = ctx.stat()
-        root_node.first = self.visit(list_of_stat.pop(0))
-        node = root_node
-        while len(list_of_stat) > 0:
-            next_node = MultiExpression()
-            next_node.first = self.visit(list_of_stat.pop(0))
-            node.next = next_node
-            node = next_node
-        return root_node
+        if len(list_of_stat) == 1:
+            return self.visit(list_of_stat.pop(0))
 
-    # Visit a parse tree produced by WhileParser#COMM.
-    def visitCOMM(self, ctx: WhileParser.COMMContext):
         root_node = MultiExpression()
         list_of_stat = ctx.stat()
         root_node.first = self.visit(list_of_stat.pop(0))
-        root_node.brackets = True
         node = root_node
         while len(list_of_stat) > 0:
             next_node = MultiExpression()
-            next_node.brackets = True
             next_node.first = self.visit(list_of_stat.pop(0))
             node.next = next_node
             node = next_node

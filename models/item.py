@@ -36,3 +36,11 @@ class Bool(AST):
 class Skip(AST):
     def __str__(self):
         return "skip"
+
+
+class Dictionary:
+    def __init__(self, dictionary_state):
+        self.dictionary_state = dictionary_state + '\n'
+
+    def __str__(self):
+        return self. dictionary_state

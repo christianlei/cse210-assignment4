@@ -7,9 +7,9 @@ compileUnit
     ;
 
 semi_stat
-    : stat SEMI BRACK_OP stat (SEMI stat)* BRACK_CL #COMM
-    | stat (SEMI stat)* #NOTCOMM
-    | BRACK_OP stat (SEMI stat)* BRACK_CL (SEMI stat)* #COMM
+    : stat SEMI BRACK_OP stat (SEMI stat)* BRACK_CL
+    | stat (SEMI stat)*
+    | BRACK_OP stat (SEMI stat)* BRACK_CL (SEMI stat)*
     ;
 
 stat
