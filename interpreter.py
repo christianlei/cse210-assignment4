@@ -43,21 +43,6 @@ class Interpreter:
         else:
             self.deque_first = False
 
-    # def adding_dictionary_to_end(self):
-    #     self.output_string += self.dictionary_to_string()
-    #     self.output_string += '\n'
-    #     self.new_line = True
-
-    # def add_to_output_string(self, string):
-    #     if self.new_line:
-    #         self.output_string += "⇒ "
-    #         self.new_line = False
-    #     if self.first_command:
-    #         self.first_command = False
-    #         return False
-    #     self.output_string += string
-    #     return True
-
     def check_in_dict(self, var):
         if var in self.store:
             return self.store[var]
@@ -90,19 +75,15 @@ class Interpreter:
             else:
                 return None
 
-    def evaluate_while_loop(self, item, one_true_run=False):
-        # if self.add_to_output_string(str(item)):
-        #     self.adding_dictionary_to_end()
+    def evaluate_while_loop(self, item):
         conditional = self.eval(item.conditional)
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
-        self.add_remainder_of_deque()
+        self.add_remainder_of_deque() # adding new step to output, might need to adjust if line above not run
         if conditional:
             new_deque = []
             self.eval(item.true)
             deq_len = len(self.deque)
             for i in range(deq_len):
-                # print("old_deque", self.deque)
-                # print("new_deque", new_deque)
                 deq_item = self.deque.pop(0)
                 if not self.deque:  # Deque Empty ( add dictionary)
                     new_deque.append(deq_item)
@@ -116,28 +97,30 @@ class Interpreter:
                     new_deque.append(deq_item)
             self.deque = new_deque
             self.add_remainder_of_deque()
-            self.evaluate_while_loop(item, True)
-            # self.add_to_output_string("; " + str(item))
-            # self.adding_dictionary_to_end()
+            self.eval(item)
 
         else:
             self.add_to_output_deque(Skip(), Dictionary(self.dictionary_to_string()))
-            # self.adding_dictionary_to_end()
 
     def evaluate_assignment_op(self, item):
-        # if self.add_to_output_string(str(item)):
-        #     self.adding_dictionary_to_end()
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
         self.store[self.eval(item.left)] = self.return_int_value(self.eval(item.right))
         self.add_to_output_deque(Skip(), Dictionary(self.dictionary_to_string()))
-        # self.add_to_output_string("skip")
-        # self.adding_dictionary_to_end()
+
+    def evaluate_multi_expressions(self, item):
+        if item.next is not None:
+            if not len(self.deque) == 2:
+                self.deque.insert(1, str(item.next))
+                self.deque.insert(-1, str(item.next))
+            else:
+                self.deque.insert(1, str(item.next))
+        self.add_remainder_of_deque()
+        if item.next is not None:
+            self.eval(item.next)
 
     def eval(self, item):
         if isinstance(item, MultiExpression):
-            self.eval(item.first)
-            if item.next is not None:
-                self.eval(item.next)
+            self.evaluate_multi_expressions(item)
 
         if isinstance(item, Expression):
             if item.method == 'if':
