@@ -1,7 +1,6 @@
 from models.operator import BinaryOp, Expression, MultiExpression, NotOp
 from models.item import Int, NegInt, Var, Bool, Dictionary, Skip
 
-
 class Interpreter:
 
     def __init__(self):
@@ -14,7 +13,7 @@ class Interpreter:
         self.deque = []
         self.deque_first = True
         self.num_of_multi_run = 0
-        self.previous_run = None
+        self.num_of_evals = 0
 
     def add_remainder_of_deque(self):
         while self.deque:
@@ -31,7 +30,7 @@ class Interpreter:
 
     def print_result(self):
         self.add_remainder_of_deque()
-        print(self.output_string)
+        print(self.output_string.rstrip())
 
     def add_to_output_deque(self, item, dictionary=None):
         if not self.deque and self.output_string != "⇒ ":
@@ -74,9 +73,13 @@ class Interpreter:
                 return None
 
     def evaluate_while_loop(self, item):
+        self.num_of_evals += 1
         conditional = self.eval(item.conditional)
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
         self.add_remainder_of_deque()  # adding new step to output, might need to adjust if line above not run
+        if self.num_of_evals > 3333:
+            self.add_to_output_deque(str(item.true) + "; " + str(item), Dictionary(self.dictionary_to_string()))
+            return
         if conditional:
             new_deque = []
             self.eval(item.true)
@@ -123,14 +126,12 @@ class Interpreter:
             self.eval(item.next)
 
     def eval(self, item):
-        if isinstance(item, MultiExpression):
-            self.evaluate_multi_expressions(item)
-
-        if isinstance(item, Expression):
-            if item.method == 'if':
-                return self.evaluate_if_expression(item)
-            elif item.method == 'while':
-                return self.evaluate_while_loop(item)
+        if isinstance(item, Int) or isinstance(item, NegInt):
+            return item.value
+        elif isinstance(item, Var):
+            return item.value
+        elif isinstance(item, Bool):
+            return item.value
 
         if isinstance(item, NotOp):
             return not self.eval(item.node)
@@ -156,10 +157,13 @@ class Interpreter:
             if item.op == '∨':
                 return self.return_int_value(left_item) or self.return_int_value(right_item)
 
-        if isinstance(item, Int) or isinstance(item, NegInt):
-            return item.value
-        elif isinstance(item, Var):
-            return item.value
-        elif isinstance(item, Bool):
-            return item.value
+        if isinstance(item, MultiExpression):
+            self.evaluate_multi_expressions(item)
+
+        if isinstance(item, Expression):
+            if item.method == 'if':
+                return self.evaluate_if_expression(item)
+            elif item.method == 'while':
+                return self.evaluate_while_loop(item)
+
         return

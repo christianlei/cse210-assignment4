@@ -7,6 +7,7 @@ from interpreter import Interpreter
 
 
 def main():
+    sys.setrecursionlimit(100000)
     val = InputStream(input())
     lexer = WhileLexer(val)
     stream = CommonTokenStream(lexer)
