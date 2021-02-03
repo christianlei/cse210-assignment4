@@ -1,6 +1,7 @@
 from models.operator import BinaryOp, Expression, MultiExpression, NotOp
 from models.item import Int, NegInt, Var, Bool, Dictionary, Skip
 
+
 class Interpreter:
 
     def __init__(self):
@@ -15,7 +16,7 @@ class Interpreter:
         self.num_of_multi_run = 0
         self.num_of_evals = 0
 
-    def add_remainder_of_deque(self):
+    def add_remainder_of_deque_to_store(self):
         while self.deque:
             deq_item = self.deque.pop(0)
             if not self.deque:
@@ -29,7 +30,7 @@ class Interpreter:
                     self.output_string += "⇒ "
 
     def print_result(self):
-        self.add_remainder_of_deque()
+        self.add_remainder_of_deque_to_store()
         print(self.output_string.rstrip())
 
     def add_to_output_deque(self, item, dictionary=None):
@@ -76,7 +77,7 @@ class Interpreter:
         self.num_of_evals += 1
         conditional = self.eval(item.conditional)
         self.add_to_output_deque(str(item), Dictionary(self.dictionary_to_string()))
-        self.add_remainder_of_deque()  # adding new step to output, might need to adjust if line above not run
+        self.add_remainder_of_deque_to_store()  # adding new step to output, might need to adjust if line above not run
         if self.num_of_evals > 3333:
             self.add_to_output_deque(str(item.true) + "; " + str(item), Dictionary(self.dictionary_to_string()))
             return
@@ -97,7 +98,7 @@ class Interpreter:
                 else:
                     new_deque.append(deq_item)
             self.deque = new_deque
-            self.add_remainder_of_deque()
+            self.add_remainder_of_deque_to_store()
             self.evaluate_while_loop(item)
 
         else:
@@ -120,7 +121,7 @@ class Interpreter:
             else:
                 self.deque.insert(1, str(item.next))
         if not self.num_of_multi_run:
-            self.add_remainder_of_deque()
+            self.add_remainder_of_deque_to_store()
         self.num_of_multi_run += 1
         if item.next is not None:
             self.eval(item.next)

@@ -1,6 +1,10 @@
 Assignment 4
 Christian Lei
 
+About Project:
+This Assignment implements the small steps of a programming language.
+This is for the while language and done in Python.
+
 To organize code:
 A dist directory holds the antlr generated files, including WhileVisitor
 The test directory holds the self tests
